@@ -3,14 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
   <title>No loops needed - Functional programming in PHP</title>
-
-  <link rel="stylesheet" href="../node_modules/reveal.js/css/reveal.css">
-  <!-- <link rel="stylesheet" href="../node_modules/reveal.js/css/print/pdf.css">-->
-  <link rel="stylesheet" href="../node_modules/reveal.js/css/theme/moon.css">
-  <link rel="stylesheet" href="../node_modules/highlight.js/styles/agate.css">
-  <link rel="stylesheet" href="output.css">
 </head>
 <body>
 <div class="reveal">
@@ -824,6 +817,18 @@ $result = collect($people)
       <aside class="notes">
         Worse performance/internal overhead. FP is good for
         parallel processing, which doesn't happen in PHP. Also internal overhead)
+      </aside>
+    </section>
+
+    <section>
+      <h1 class="text-xl">Is this everything? <span class="fragment text-green">Nope!</span></h1>
+      <ul class="text-moon text-sm">
+        <li class="fragment">Recursion and Tail Call Optimization</li>
+        <li class="fragment">Currying</li>
+        <li class="fragment">Pipelines</li>
+        <li class="fragment">...</li>
+      </ul>
+      <aside class="notes">
       </aside>
     </section>
 
