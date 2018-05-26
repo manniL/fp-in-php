@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf dist && webpack --mode production",
+    "build-watch": "webpack --mode production --watch",
     "deploy": "gh-pages-deploy",
     "dev": "webpack-serve",
     "clean-source": "rimraf src node_modules package.json package-lock.json"

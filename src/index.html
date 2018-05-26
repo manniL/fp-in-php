@@ -585,17 +585,18 @@ function peopleWithNameStartingWithT($people)
 
     <!-- Ditch loops -->
     <section>
-      <h1 class="text-xl">2. Ditch loops for map, reduce and filter</h1>
+      <h1 class="text-xl">2. Ditch loops for filter, map, each and reduce</h1>
 
       <aside class="notes">
         We are not allowed to loop.
-        So we use these declarative functions.
+        So we use declarative functions that iterate over the arrays/collections for us and do things.
+        Similar to recently built filter function.
       </aside>
     </section>
 
 
     <section>
-      <h1>Filter</h1>
+      <h1 class="text-xl">Filter</h1>
       <pre class="w-full h-full -mt-4 shadow-none">
           <code class="javascript w-full m-0 px-4 leading-normal" data-trim data-noescape>
                 $people = [
@@ -605,15 +606,41 @@ function peopleWithNameStartingWithT($people)
                     new Person('Ralph', 12)
                 ];
 
-                array_filter($people, function (Person $p) {
+                $olderPeople = array_filter($people, function (Person $p) {
                     return $p->age >= 18;
                 }));
           </code>
       </pre>
+      <p class="fragment text-moon text-left text-sm -mt-4">
+        Passes each array item to the callback function. If the function returns true, the item is included
+        in the result array.
+      </p>
     </section>
 
     <section>
-      <h1>Map</h1>
+      <h1 class="text-xl">Get names of all people</h1>
+      <pre class="w-full h-full -mt-4 shadow-none">
+          <code class="javascript w-full m-0 px-4 leading-normal" data-trim data-noescape>
+                $people = [
+                    new Person('Taylor', 35),
+                    new Person('Rasmus', 58),
+                    new Person('Carl', 16),
+                    new Person('Ralph', 12)
+                ];
+
+                $names = [];
+                foreach($people as $person){
+                    $names[] = $person->name;
+                }
+          </code>
+      </pre>
+      <aside class="notes">
+        Weird signature here! Careful
+      </aside>
+    </section>
+
+    <section>
+      <h1 class="text-xl">Map</h1>
       <pre class="w-full h-full -mt-4 shadow-none">
           <code class="javascript w-full m-0 px-4 leading-normal" data-trim data-noescape>
                 $people = [
@@ -628,14 +655,15 @@ function peopleWithNameStartingWithT($people)
                 }), $people); // ['Taylor','Rasmus','Carl','Ralph']
           </code>
       </pre>
-      <aside class="notes">
-        Weird syntax here! Careful
-      </aside>
+      <p class="text-moon text-left text-sm -mt-4 fragment">
+        Passes each array item to the callback function. The return value of that function will be included in the
+        result array.
+      </p>
     </section>
 
 
     <section class="w-full h-full">
-      <h1>Each</h1>
+      <h1 class="text-xl">Each</h1>
       <pre class="w-full shadow-none">
          <code class="javascript w-full m-0 -my-8 px-4 leading-normal" data-trim data-noescape>
           $people = [
@@ -648,17 +676,16 @@ function peopleWithNameStartingWithT($people)
           })); // 'Taylor Rasmus '
          </code>
       </pre>
-      <ul>
-        <li class="fragment">Only use for actions</li>
-        <li class="fragment">Do <b>not</b> use for transformation</li>
-        <li class="fragment">Use map instead</li>
+      <ul class="text-moon">
+        <li class="fragment">Like map, but does not return anything</li>
+        <li class="fragment">Only use for actions, do <b>not</b> use for transformation</li>
       </ul>
     </section>
 
     <section class="w-full h-full">
       <h1 class="text-red text-xl">Don't do that!</h1>
       <pre class="w-full h-full shadow-none">
-               <code class="javascript w-full min-h-full m-0 px-4 leading-normal" data-trim data-noescape>
+               <code class="javascript w-full m-0 px-4 leading-normal overflow-hidden" data-trim data-noescape>
                 $people = [
                     new Person('Taylor', 35),
                     new Person('Rasmus', 58)
@@ -669,7 +696,6 @@ function peopleWithNameStartingWithT($people)
                     array_walk($collection, function (Person $p) use (&$age) {
                         $age += $p->age;
                     });
-
                     return $age;
                 };
                </code>
@@ -677,50 +703,53 @@ function peopleWithNameStartingWithT($people)
     </section>
 
     <section class="w-full h-full">
-      <h1>Reduce</h1>
+      <h1 class="text-xl">Reduce</h1>
       <pre class="w-full shadow-none">
-               <code class="javascript w-full m-0 px-4 leading-normal" data-trim data-noescape>
+          <code class="javascript w-full m-0 px-4 leading-normal" data-trim data-noescape>
                 $people = [
                     new Person('Taylor', 35),
                     new Person('Rasmus', 58)
                 ];
 
-                $sumAge = function (int $age, Person $person) {
-                    return $age + $person->age;
+                $sumAge = function ($accumulatedAge, Person $person) {
+                    return $accumulatedAge + $person->age;
                 };
 
-                array_reduce($people, $sumAge, 0); // Initial age value is 0
-                // Will return 93
+                array_reduce($people, $sumAge); //End result: 93
                </code>
-            </pre>
+      </pre>
+      <p class="text-moon text-left text-sm -mt-4 fragment">
+        Passes each array item to the callback function. The return value of that function will be used as first
+        parameter (accumulator) in the next call. Does return whatever you like to.
+      </p>
       <aside class="notes">
         <ul>
           <li>Accumulator carries values</li>
           <li>Accumulator of next call is return of current method call</li>
-          <li>Initial value can be set (optionally)</li>
         </ul>
       </aside>
     </section>
     <section class="w-full h-full">
-      <h1>Reduce #2</h1>
+      <h1 class="text-xl">Reduce #2</h1>
       <pre class="w-full shadow-none">
-               <code class="javascript w-full m-0 px-4 leading-normal" data-trim data-noescape>
-                $people = [
-                    new Person('Taylor', 35),
-                    new Person('Rasmus', 58)
-                ];
+          <code class="javascript w-full m-0 px-4 leading-normal" data-trim data-noescape>
+           $people = [
+               new Person('Taylor', 35),
+               new Person('Rasmus', 58)
+           ];
 
-                $concatNames = function (string $names, Person $person) {
-                    return $names . $person->name . " ";
-                };
+           $concatNames = function (string $names, Person $person) {
+               return $names . $person->name . " ";
+           };
 
-                array_reduce($people, $concatNames, ""); // "Taylor Rasmus "
-               </code>
-            </pre>
+           array_reduce($people, $concatNames, ""); // "Taylor Rasmus "
+          </code>
+      </pre>
+      <p class="text-moon text-left text-sm -mt-4 fragment">
+        Takes initial accumulator value as 3rd argument (optional).
+      </p>
       <aside class="notes">
         <ul>
-          <li>Accumulator carries values</li>
-          <li>Accumulator of next call is return of current method call</li>
           <li>Initial value can be set (optionally)</li>
         </ul>
       </aside>
@@ -779,7 +808,7 @@ $nameContains = function (string $toContain) {
         <code class="php w-full m-0 -mb-8 p-4 leading-normal" data-trim data-noescape>
 $result = collect($people)
               ->filter($nameContains("a"))
-              ->map->age
+              ->pluck('age') // maps to the age property
               ->avg();
         </code>
       </pre>
