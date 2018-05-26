@@ -1,0 +1,926 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>No loops needed - Functional programming in PHP</title>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- Intro -->
+    <section>
+      <h2 class="normal-case mb-8">
+        No loops needed
+        <span class="fragment">- Functional programming in <span class="text-php-light">PHP</span></span>
+      </h2>
+      <h2 class="text-base fragment">PHP USERGROUP DRESDEN</h2>
+      <h4 class="text-sm text-grey fragment">28.05.2018</h4>
+    </section>
+
+
+    <!-- About me -->
+    <section>
+      <h2 class="normal-case mb-8">
+        About me
+      </h2>
+      <div class="flex flex-row justify-around items-center fragment fade-left mx-auto" data-fragment-index="1">
+        <div class="flex flex-col items-center mx-auto">
+          <img src="assets/me.jpg" width="255" height="255"
+               class="rounded-full border-solid border-4 border-grey-light shadow-lg mb-4">
+          <div class="flex flex-row justify-between text-sm text-green-lightest">
+            <a href="https://github.com/manniL" target="blank" rel="noreferrer noopener nofollow"
+               class="text-center no-underline rounded text-green-lightest hover:text-green flex flex-row items-center mx-2">
+              <svg class="inline-block w-8 h-8 text-white fill-current" viewBox="0 100 1792 1792"
+                   xmlns="http://www.w3.org/2000/svg">
+                <path d="M896 128q209 0 385.5 103t279.5 279.5 103 385.5q0 251-146.5 451.5t-378.5 277.5q-27 5-40-7t-13-30q0-3 .5-76.5t.5-134.5q0-97-52-142 57-6 102.5-18t94-39 81-66.5 53-105 20.5-150.5q0-119-79-206 37-91-8-204-28-9-81 11t-92 44l-38 24q-93-26-192-26t-192 26q-16-11-42.5-27t-83.5-38.5-85-13.5q-45 113-8 204-79 87-79 206 0 85 20.5 150t52.5 105 80.5 67 94 39 102.5 18q-39 36-49 103-21 10-45 15t-57 5-65.5-21.5-55.5-62.5q-19-32-48.5-52t-49.5-24l-20-3q-21 0-29 4.5t-5 11.5 9 14 13 12l7 5q22 10 43.5 38t31.5 51l10 23q13 38 44 61.5t67 30 69.5 7 55.5-3.5l23-4q0 38 .5 88.5t.5 54.5q0 18-13 30t-40 7q-232-77-378.5-277.5t-146.5-451.5q0-209 103-385.5t279.5-279.5 385.5-103zm-477 1103q3-7-7-12-10-3-13 2-3 7 7 12 9 6 13-2zm31 34q7-5-2-16-10-9-16-3-7 5 2 16 10 10 16 3zm30 45q9-7 0-19-8-13-17-6-9 5 0 18t17 7zm42 42q8-8-4-19-12-12-20-3-9 8 4 19 12 12 20 3zm57 25q3-11-13-16-15-4-19 7t13 15q15 6 19-6zm63 5q0-13-17-11-16 0-16 11 0 13 17 11 16 0 16-11zm58-10q-2-11-18-9-16 3-14 15t18 8 14-14z"/>
+              </svg>
+              <span class="ml-1">manniL</span>
+            </a>
+            <a href="https://twitter.com/TheAlexLichter" target="blank" rel="noreferrer noopener nofollow"
+               class="text-center no-underline rounded text-blue-lightest hover:text-green flex flex-row items-stretch mx-2">
+              <svg class="inline-block w-8 h-8 text-blue-light fill-current" viewBox="0 -100 1792 1792"
+                   xmlns="http://www.w3.org/2000/svg">
+                <path d="M1684 408q-67 98-162 167 1 14 1 42 0 130-38 259.5t-115.5 248.5-184.5 210.5-258 146-323 54.5q-271 0-496-145 35 4 78 4 225 0 401-138-105-2-188-64.5t-114-159.5q33 5 61 5 43 0 85-11-112-23-185.5-111.5t-73.5-205.5v-4q68 38 146 41-66-44-105-115t-39-154q0-88 44-163 121 149 294.5 238.5t371.5 99.5q-8-38-8-74 0-134 94.5-228.5t228.5-94.5q140 0 236 102 109-21 205-78-37 115-142 178 93-10 186-50z"/>
+              </svg>
+              <span class="ml-1">TheAlexLichter</span>
+            </a>
+          </div>
+          <a href="https://lichter.io" target="blank" rel="noreferrer noopener nofollow"
+             class="text-center text-sm no-underline rounded text-blue-lightest hover:text-green flex flex-row items-stretch mx-2">
+            <svg class="inline-block w-8 h-10 text-red-light fill-current" width="1792" height="1792"
+                 viewBox="0 50 1792 1792" xmlns="http://www.w3.org/2000/svg">
+              <path d="M896 128q209 0 385.5 103t279.5 279.5 103 385.5-103 385.5-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103zm274 521q-2 1-9.5 9.5t-13.5 9.5q2 0 4.5-5t5-11 3.5-7q6-7 22-15 14-6 52-12 34-8 51 11-2-2 9.5-13t14.5-12q3-2 15-4.5t15-7.5l2-22q-12 1-17.5-7t-6.5-21q0 2-6 8 0-7-4.5-8t-11.5 1-9 1q-10-3-15-7.5t-8-16.5-4-15q-2-5-9.5-11t-9.5-10q-1-2-2.5-5.5t-3-6.5-4-5.5-5.5-2.5-7 5-7.5 10-4.5 5q-3-2-6-1.5t-4.5 1-4.5 3-5 3.5q-3 2-8.5 3t-8.5 2q15-5-1-11-10-4-16-3 9-4 7.5-12t-8.5-14h5q-1-4-8.5-8.5t-17.5-8.5-13-6q-8-5-34-9.5t-33-.5q-5 6-4.5 10.5t4 14 3.5 12.5q1 6-5.5 13t-6.5 12q0 7 14 15.5t10 21.5q-3 8-16 16t-16 12q-5 8-1.5 18.5t10.5 16.5q2 2 1.5 4t-3.5 4.5-5.5 4-6.5 3.5l-3 2q-11 5-20.5-6t-13.5-26q-7-25-16-30-23-8-29 1-5-13-41-26-25-9-58-4 6-1 0-15-7-15-19-12 3-6 4-17.5t1-13.5q3-13 12-23 1-1 7-8.5t9.5-13.5.5-6q35 4 50-11 5-5 11.5-17t10.5-17q9-6 14-5.5t14.5 5.5 14.5 5q14 1 15.5-11t-7.5-20q12 1 3-17-4-7-8-9-12-4-27 5-8 4 2 8-1-1-9.5 10.5t-16.5 17.5-16-5q-1-1-5.5-13.5t-9.5-13.5q-8 0-16 15 3-8-11-15t-24-8q19-12-8-27-7-4-20.5-5t-19.5 4q-5 7-5.5 11.5t5 8 10.5 5.5 11.5 4 8.5 3q14 10 8 14-2 1-8.5 3.5t-11.5 4.5-6 4q-3 4 0 14t-2 14q-5-5-9-17.5t-7-16.5q7 9-25 6l-10-1q-4 0-16 2t-20.5 1-13.5-8q-4-8 0-20 1-4 4-2-4-3-11-9.5t-10-8.5q-46 15-94 41 6 1 12-1 5-2 13-6.5t10-5.5q34-14 42-7l5-5q14 16 20 25-7-4-30-1-20 6-22 12 7 12 5 18-4-3-11.5-10t-14.5-11-15-5q-16 0-22 1-146 80-235 222 7 7 12 8 4 1 5 9t2.5 11 11.5-3q9 8 3 19 1-1 44 27 19 17 21 21 3 11-10 18-1-2-9-9t-9-4q-3 5 .5 18.5t10.5 12.5q-7 0-9.5 16t-2.5 35.5-1 23.5l2 1q-3 12 5.5 34.5t21.5 19.5q-13 3 20 43 6 8 8 9 3 2 12 7.5t15 10 10 10.5q4 5 10 22.5t14 23.5q-2 6 9.5 20t10.5 23q-1 0-2.5 1t-2.5 1q3 7 15.5 14t15.5 13q1 3 2 10t3 11 8 2q2-20-24-62-15-25-17-29-3-5-5.5-15.5t-4.5-14.5q2 0 6 1.5t8.5 3.5 7.5 4 2 3q-3 7 2 17.5t12 18.5 17 19 12 13q6 6 14 19.5t0 13.5q9 0 20 10.5t17 19.5q5 8 8 26t5 24q2 7 8.5 13.5t12.5 9.5l16 8 13 7q5 2 18.5 10.5t21.5 11.5q10 4 16 4t14.5-2.5 13.5-3.5q15-2 29 15t21 21q36 19 55 11-2 1 .5 7.5t8 15.5 9 14.5 5.5 8.5q5 6 18 15t18 15q6-4 7-9-3 8 7 20t18 10q14-3 14-32-31 15-49-18 0-1-2.5-5.5t-4-8.5-2.5-8.5 0-7.5 5-3q9 0 10-3.5t-2-12.5-4-13q-1-8-11-20t-12-15q-5 9-16 8t-16-9q0 1-1.5 5.5t-1.5 6.5q-13 0-15-1 1-3 2.5-17.5t3.5-22.5q1-4 5.5-12t7.5-14.5 4-12.5-4.5-9.5-17.5-2.5q-19 1-26 20-1 3-3 10.5t-5 11.5-9 7q-7 3-24 2t-24-5q-13-8-22.5-29t-9.5-37q0-10 2.5-26.5t3-25-5.5-24.5q3-2 9-9.5t10-10.5q2-1 4.5-1.5t4.5 0 4-1.5 3-6q-1-1-4-3-3-3-4-3 7 3 28.5-1.5t27.5 1.5q15 11 22-2 0-1-2.5-9.5t-.5-13.5q5 27 29 9 3 3 15.5 5t17.5 5q3 2 7 5.5t5.5 4.5 5-.5 8.5-6.5q10 14 12 24 11 40 19 44 7 3 11 2t4.5-9.5 0-14-1.5-12.5l-1-8v-18l-1-8q-15-3-18.5-12t1.5-18.5 15-18.5q1-1 8-3.5t15.5-6.5 12.5-8q21-19 15-35 7 0 11-9-1 0-5-3t-7.5-5-4.5-2q9-5 2-16 5-3 7.5-11t7.5-10q9 12 21 2 8-8 1-16 5-7 20.5-10.5t18.5-9.5q7 2 8-2t1-12 3-12q4-5 15-9t13-5l17-11q3-4 0-4 18 2 31-11 10-11-6-20 3-6-3-9.5t-15-5.5q3-1 11.5-.5t10.5-1.5q15-10-7-16-17-5-43 12zm-163 877q206-36 351-189-3-3-12.5-4.5t-12.5-3.5q-18-7-24-8 1-7-2.5-13t-8-9-12.5-8-11-7q-2-2-7-6t-7-5.5-7.5-4.5-8.5-2-10 1l-3 1q-3 1-5.5 2.5t-5.5 3-4 3 0 2.5q-21-17-36-22-5-1-11-5.5t-10.5-7-10-1.5-11.5 7q-5 5-6 15t-2 13q-7-5 0-17.5t2-18.5q-3-6-10.5-4.5t-12 4.5-11.5 8.5-9 6.5-8.5 5.5-8.5 7.5q-3 4-6 12t-5 11q-2-4-11.5-6.5t-9.5-5.5q2 10 4 35t5 38q7 31-12 48-27 25-29 40-4 22 12 26 0 7-8 20.5t-7 21.5q0 6 2 16z"/>
+            </svg>
+            <span class="ml-1">lichter.io</span>
+          </a>
+        </div>
+        <div class="mx-auto">
+          <h3 class="mb-2 font-light">
+            Alexander Lichter
+          </h3>
+          <ul class="text-sm text-grey-dark">
+            <li class="fragment fade-up" data-fragment-index="2">PHP developer for ~5 years</li>
+            <li class="fragment fade-up" data-fragment-index="3">self-employed since 2015</li>
+            <li class="fragment fade-up" data-fragment-index="5">Studying CS @ TUD in the meantime</li>
+            <li class="fragment fade-up" data-fragment-index="6">Went from backend to fullstack-dev</li>
+            <li class="fragment fade-up" data-fragment-index="7">❤️ SPA, using PHP almost API-only now</li>
+          </ul>
+        </div>
+      </div>
+      <div class="fragment" data-fragment-index="4">
+        <img src="assets/developmint.png" class="border-0 bg-transparent shadow-none">
+      </div>
+    </section>
+
+    <!-- My topic -->
+
+    <section>
+      <img class="absolute pin-t pin-b pin-r pin-l border-0 shadow-none bg-transparent" src="assets/lambda_mid.png">
+      <s class="text-md opacity-25">Half Life 3</s>
+      <h1 class="text-xl pl-4">Functional Programming</h1>
+    </section>
+
+    <!-- Before we start -->
+    <section>
+      <h2>Before we <span class="text-php-light">start...</span></h2>
+
+      <div class="text-moon">
+        <p class="fragment">I have some questions! Who...</p>
+        <ul>
+          <li class="fragment">...heard of "Functional programming" before?</li>
+          <li class="fragment">...tried it?</li>
+          <li class="fragment">...uses it in daily programming?</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- What is functional programming? -->
+    <section>
+      <h1 class="text-2xl">What is functional programming?</h1>
+    </section>
+
+    <!-- A bunch of buzzwords -->
+    <section>
+      <h1 class="text-xl">A bunch of buzzwords</h1>
+
+      <ul class="fragment">
+        <li>stateless</li>
+        <li>composition</li>
+        <li>pure</li>
+        <li>side effects</li>
+        <li>monad</li>
+        <li>referential transparency</li>
+        <li>determinism</li>
+        <li>immutability</li>
+        <li>currying</li>
+        <li>...</li>
+      </ul>
+      <img class="fragment absolute pin-b pin-r border-0 shadow-none bg-transparent"
+           src="assets/lambda_mid.png"
+           width="128">
+      <span class="fragment absolute pin-b pin-r pin-l text-4xl text-red font-bold">???</span>
+      <aside class="notes">
+        Don't worry, we won't go through all of them, but some are necessary to understand!
+      </aside>
+    </section>
+
+    <!-- Try it again: What is FP? -->
+    <section>
+      <h1 class="text-xl">What is functional programming?</h1>
+      <h2 class="fragment text-lg underline">A programming paradigm 🎉</h2>
+      <h2 class="fragment text-base">But what's that actually?🤔</h2>
+      <h2 class="fragment text-base text-grey-light">Mindset/World view</h2>
+      <aside class="notes">
+        How you "look" at the programming world
+        How you treat things
+      </aside>
+    </section>
+
+    <!-- Paradigm overview -->
+    <section>
+      <h1 class="text-xl underline">Imperative</h1>
+      <div class="flex justify-between mb-8">
+        <h2 class="fragment text-lg">Procedural</h2>
+        <h2 class="fragment text-lg">Object-oriented</h2>
+      </div>
+      <h1 class="fragment text-xl underline">Declarative</h1>
+      <div class="flex justify-between">
+        <h2 class="fragment text-lg">Functional</h2>
+        <h2 class="fragment text-lg">Logic</h2>
+      </div>
+      <aside class="notes">
+        How you "look" at the programming world
+        How you treat things
+      </aside>
+    </section>
+
+
+    <!-- Imperative vs. Declarative -->
+    <section>
+      <h1 class="text-2xl">Imperative vs. Declarative</h1>
+    </section>
+
+    <!-- Scenario -->
+    <section>
+      <h1 class="text-xl">Example scenario</h1>
+      <h2 class="text-lg">Filter all people that are at least 18 years old</h2>
+    </section>
+
+    <!-- Imperative -->
+    <section>
+      <h1 class="text-xl">Imperative programming</h1>
+      <h3 class="text-lg normal-case fragment">Describes "how to do"</h3>
+      <aside class="notes">
+        <ul>
+          <li>
+            Imperative: Tell the computer HOW do to sth. Create a new array, loop 4 times...
+          </li>
+          <li>
+            Focus on CONTROL FLOW
+          </li>
+          <li>
+            If you'd chain more operations (like only returning names) it'll get more complex
+          </li>
+        </ul>
+      </aside>
+    </section>
+
+    <!-- Imperative code -->
+    <section class="w-full h-full">
+           <pre class="w-full h-full -mt-4 shadow-none">
+               <code class="php w-full m-0 min-h-full px-4 text-xs leading-normal" data-trim data-noescape>
+class Person
+{
+    public $name;
+    public $age;
+
+    public function __construct(string $name, int $age)
+    {
+        $this->name = $name;
+        $this->age = $age;
+    }
+}
+
+$people = [
+    new Person('Taylor', 35),
+    new Person('Rasmus', 58),
+    new Person('Carl', 16),
+    new Person('Ralph', 12)
+];
+
+$peopleOver17 = [];
+
+foreach ($people as $person){
+    if ($person->age >= 18) {
+      $peopleOver17[] = $person;
+    }
+}
+var_dump($peopleOver17); // The array contains the two person objects (Taylor and Rasmus)
+            </code>
+        </pre>
+    </section>
+
+    <!-- Declarative -->
+    <section>
+      <h1 class="text-xl">Declarative programming</h1>
+      <h3 class="text-lg normal-case fragment">Describes "what to do"</h3>
+      <aside class="notes">
+        <ul>
+          <li>Tell the computer WHAT to do, not how</li>
+        </ul>
+      </aside>
+    </section>
+
+    <!-- Declarative SQL code -->
+    <section class="w-full h-full">
+      <h2>SQL</h2>
+      <h3>One of the best declarative examples</h3>
+      <pre class="w-full h-full -mt-4 shadow-none">
+               <code class="sql w-full m-0 px-4 leading-normal" data-trim data-noescape>
+                   SELECT * FROM people WHERE age >= 18
+                </code>
+            </pre>
+      <aside class="notes">
+        <ul>
+          <li>SQL is declarative</li>
+          <li>Focus on LOGIC</li>
+          <li>Implementation is "hidden"</li>
+          <li>Declarative PHP equivalent will come soonTM</li>
+        </ul>
+      </aside>
+    </section>
+
+
+    <!-- We now know what declarative means-->
+    <section>
+      <h1 class="text-xl">Okay, we know what's declarative now.. but what is functional programming?</h1>
+    </section>
+
+    <!-- What is FP. Try #3 -->
+    <section>
+      <h1 class="text-xl">Functional programming means that...</h1>
+      <ul>
+        <li class="fragment text-moon">
+          ...everything is a (pure) function
+        </li>
+        <li class="fragment text-moon">
+          ...shared state should be avoided
+        </li>
+        <li class="fragment text-moon">
+          ...all data should be immutable
+        </li>
+      </ul>
+      <aside class="notes">
+        Immutable: Cannot change after creation
+        Shared state: global variables, etc etc
+      </aside>
+    </section>
+
+    <!-- Limitations -->
+    <section>
+      <h1 class="text-xl">That means we follow limitations</h1>
+      <h2 class="text-base text-grey">(At least during the talk)</h2>
+      <ul>
+        <li class="fragment text-moon">
+          No (value) assignments
+        </li>
+        <li class="fragment text-moon">
+          No mutable state
+        </li>
+        <li class="fragment text-moon">
+          No loops
+        </li>
+      </ul>
+      <aside class="notes">
+        <ul>
+          <li>
+            Not allowed to assign values to variables but can assign functions to variables.
+          </li>
+          <li>
+            Not allowed to change the value of an assignment or parameter
+          </li>
+          <li>
+            Not allowed to use PHP's "while", "foreach" and "for" commands. But we may define our
+            own method to cycle through the elements of a set and call it foreach/for/while.
+          </li>
+        </ul>
+      </aside>
+    </section>
+
+    <section>
+      <h1 class="text-xl">Okay, let's build a program with the tools of FP!</h1>
+    </section>
+
+    <section>
+      <h1 class="text-xl">1. Use pure functions!</h1>
+      <h1 class="fragment text-xl">But what's that 😲</h1>
+    </section>
+
+    <section>
+      <h1 class="text-xl"> A pure function:</h1>
+      <ol class="text-moon text-lg">
+        <li class="">only depends on its inputs</li>
+        <li class="fragment">only returns something</li>
+      </ol>
+      <aside class="notes">
+        Does not use global variables,
+        does not modify anything out of the scope
+      </aside>
+    </section>
+
+    <section class="w-full h-full">
+      <pre class="w-full -mt-4 mb-6 shadow-none">
+               <code class="php w-full m-0 -mb-8 p-4 leading-normal" data-trim data-noescape>
+$name = "PHP Usergroup Dresden";
+
+function greet()
+{
+    global $name;
+    echo "Hi $name!";
+}
+
+greet(); // Hi PHP Usergroup Dresden!
+                </code>
+        <code class="fragment php w-full m-0 -mt-8 p-4 leading-normal" data-trim data-noescape>
+$name = "all";
+
+greet(); // Hi all!
+        </code>
+            </pre>
+      <h1 class="fragment text-red font-bold">Impure!</h1>
+      <aside class="notes">
+        <ul>
+          <li>Impure because it uses global $name</li>
+          <li>Impure because it doesn't even have a return value</li>
+          <li>Call it with the same arguments (none) twice and different outcomes -> impure</li>
+          <li>echoing out -> side effect (anything from making HTTP call to write files etc.)</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="w-full h-full">
+      <pre class="w-full -mt-4 mb-6 shadow-none">
+               <code class="php w-full m-0 -mb-8 p-4 leading-normal" data-trim data-noescape>
+function greet($name) : string
+{
+    return "Hi $name!";
+}
+$name = "PHP Usergroup Dresden";
+
+greet($name); // Hi PHP Usergroup Dresden!
+$name = "all";
+
+greet($name); // Hi all!
+        </code>
+            </pre>
+      <h1 class="fragment text-green font-bold">Pure!</h1>
+    </section>
+
+    <section>
+      <h1 class="text-xl">Any Benefits? <span class="fragment text-green">Yes!</span></h1>
+      <ul class="text-moon">
+        <li class="fragment">Predictable</li>
+        <li class="fragment">Highly reusable</li>
+        <li class="fragment">Unproblematic parallel execution</li>
+        <li class="fragment">Great testability</li>
+        <li class="fragment">Always cacheable</li>
+        <li class="fragment">Clear structure, reduced cognitive load</li>
+      </ul>
+      <aside class="notes">
+        Predictable: It's like a huge lookup table (similar to math. functions)
+        Parallel: Only depend on inputs, so no problem.
+      </aside>
+    </section>
+
+
+    <!-- Lego blocks -->
+    <section data-background="https://media.giphy.com/media/26BkNRBRwdXfGsAlW/giphy.gif"
+             data-background-size="contain"></section>
+
+    <section>
+      <h1 class="text-xl">Remember the scenario from before?</h1>
+      <h1 class="fragment text-xl">Let's build a pure function for it!</h1>
+    </section>
+
+    <section class="w-full h-full">
+           <pre class="w-full -mt-4 shadow-none">
+               <code class="php w-full m-0 min-h-full px-4 leading-normal" data-trim data-noescape>
+function peopleOver17($people)
+{
+    $peopleOver17 = [];
+    foreach ($people as $person) {
+        if ($person->age >= 18) {
+            $peopleOver17[] = $person;
+        }
+    }
+
+    return $peopleOver17;
+}
+            </code>
+        </pre>
+      <h2 class="fragment">But what if we want to enter a variable age?</h2>
+    </section>
+
+    <section class="w-full h-full">
+           <pre class="w-full -mt-4 shadow-none">
+               <code class="php w-full m-0 min-h-full px-4 leading-normal" data-trim data-noescape>
+function peopleOverAge($people, $age)
+{
+    $peopleOverAge = [];
+    foreach ($people as $person) {
+        if ($person->age >= $age) {
+            $peopleOverAge[] = $person;
+        }
+    }
+
+    return $peopleOverAge;
+}
+            </code>
+        </pre>
+      <h2 class="fragment">But what if we want to see if the first letter starts with T instead?</h2>
+    </section>
+
+    <section class="w-full h-full">
+           <pre class="w-full -mt-4 shadow-none">
+               <code class="php w-full m-0 min-h-full px-4 leading-normal" data-trim data-noescape>
+function peopleWithNameStartingWithT($people)
+{
+    $result = [];
+    foreach ($people as $person) {
+        if (strpos($person->name, 'T') === 0) {
+            $result[] = $person;
+        }
+    }
+
+    return $result;
+}
+            </code>
+        </pre>
+      <h2 class="fragment">No problem.. But it seems like we are repeating code again and again</h2>
+    </section>
+
+    <section>
+      <h1 class="text-xl">Can we generalize this further?</h1>
+      <h3 class="text-xs normal-case text-indigo font-normal">Spoiler: yes</h3>
+    </section>
+
+    <!-- Higher order functions -->
+    <section>
+      <h1 class="text-xl">Higher Order Functions</h1>
+
+      <h3 class="fragment text-md normal-case font-normal">Functions that take other functions as argument</h3>
+      <pre class="w-full h-full -mt-4 shadow-none">
+                <code class="php fragment w-full m-0 min-h-full px-4 leading-normal" data-trim data-noescape>
+                  $twice = function(callable $f, $v){
+                      return $f($f($v));
+                  };
+
+                  $add3 = function($v){
+                      return $v + 3;
+                  };
+
+                  $twice($add3, 7); // 13
+                </code>
+            </pre>
+    </section>
+
+    <section>
+      <h1 class="text-xl">Why does that work?</h1>
+
+      <h3 class="fragment text-md normal-case font-normal">In PHP (since 5.3), functions are first-class citizens. They
+                                                           can be:</h3>
+      <ul class="text-moon">
+        <li class="fragment">returned from functions</li>
+        <li class="fragment">passed into functions as arguments</li>
+        <li class="fragment">assigned to variables</li>
+      </ul>
+    </section>
+
+
+    <!-- Build filter -->
+    <section>
+      <h1 class="text-xl">Let's build one!</h1>
+    </section>
+
+    <section>
+            <pre class="w-full h-full -mt-4 shadow-none">
+                <code class="javascript w-full m-0 min-h-full px-4 leading-normal" data-trim data-noescape>
+                  $filter = function(callable $f, array $collection) {
+                      $result = [];
+                      //Do sth here
+
+                      return $result;
+                  };
+                </code>
+            </pre>
+      <pre class="w-full h-full -mt-4 shadow-none">
+                <code class="javascript fragment w-full m-0 min-h-full px-4 leading-normal" data-trim data-noescape>
+                    $filter = function (callable $f, array $collection) {
+                        $result = [];
+
+                        foreach ($collection as $item) {
+                            if ($f($item)) {
+                                $result[] = $item;
+                            }
+                        }
+
+                        return $result;
+                    };
+                </code>
+            </pre>
+      <aside class="notes">
+        <ul>
+          <li>Situation as before (filter persons age >=18)</li>
+        </ul>
+      </aside>
+    </section>
+
+    <!-- Done building filter -->
+    <section>
+      <h1 class="text-xl">Tada! Our own filter function</h1>
+      <pre class="w-full h-full -mt-4 shadow-none ">
+                <code class="php fragment w-full m-0 min-h-full px-4 leading-normal overflow-hidden"
+                      data-trim
+                      data-noescape>
+                  $people = [
+                      new Person('Taylor', 35),
+                      new Person('Rasmus', 58),
+                      new Person('Carl', 16),
+                      new Person('Ralph', 12)
+                  ];
+
+                  $above18 = function (Person $p) {
+                      return $p->age >= 18;
+                  };
+
+                  $filter($above18, $people);
+
+                </code>
+            </pre>
+    </section>
+
+    <!-- Inline it -->
+    <section>
+      <h1 class="text-xl">We can also inline it</h1>
+      <pre class="w-full h-full -mt-4 shadow-none ">
+                <code class="php fragment w-full m-0 min-h-full px-4 leading-normal overflow-hidden"
+                      data-trim
+                      data-noescape>
+                  $people = [
+                      new Person('Taylor', 35),
+                      new Person('Rasmus', 58),
+                      new Person('Carl', 16),
+                      new Person('Ralph', 12)
+                  ];
+
+                  $filter(function (Person $p) {
+                      return $p->age >= 18;
+                  }, $people);
+                </code>
+            </pre>
+    </section>
+
+
+    <!-- Ditch loops -->
+    <section>
+      <h1 class="text-xl">2. Ditch loops for filter, map, each and reduce</h1>
+
+      <aside class="notes">
+        We are not allowed to loop.
+        So we use declarative functions that iterate over the arrays/collections for us and do things.
+        Similar to recently built filter function.
+      </aside>
+    </section>
+
+
+    <section>
+      <h1 class="text-xl">Filter</h1>
+      <pre class="w-full h-full -mt-4 shadow-none">
+          <code class="javascript w-full m-0 px-4 leading-normal" data-trim data-noescape>
+                $people = [
+                    new Person('Taylor', 35),
+                    new Person('Rasmus', 58),
+                    new Person('Carl', 16),
+                    new Person('Ralph', 12)
+                ];
+
+                $olderPeople = array_filter($people, function (Person $p) {
+                    return $p->age >= 18;
+                }));
+          </code>
+      </pre>
+      <p class="fragment text-moon text-left text-sm -mt-4">
+        Passes each array item to the callback function. If the function returns true, the item is included
+        in the result array.
+      </p>
+    </section>
+
+    <section>
+      <h1 class="text-xl">Get names of all people</h1>
+      <pre class="w-full h-full -mt-4 shadow-none">
+          <code class="javascript w-full m-0 px-4 leading-normal" data-trim data-noescape>
+                $people = [
+                    new Person('Taylor', 35),
+                    new Person('Rasmus', 58),
+                    new Person('Carl', 16),
+                    new Person('Ralph', 12)
+                ];
+
+                $names = [];
+                foreach($people as $person){
+                    $names[] = $person->name;
+                }
+          </code>
+      </pre>
+      <aside class="notes">
+        Weird signature here! Careful
+      </aside>
+    </section>
+
+    <section>
+      <h1 class="text-xl">Map</h1>
+      <pre class="w-full h-full -mt-4 shadow-none">
+          <code class="javascript w-full m-0 px-4 leading-normal" data-trim data-noescape>
+                $people = [
+                    new Person('Taylor', 35),
+                    new Person('Rasmus', 58),
+                    new Person('Carl', 16),
+                    new Person('Ralph', 12)
+                ];
+
+                array_map(function (Person $p) {
+                    return $p->name;
+                }), $people); // ['Taylor','Rasmus','Carl','Ralph']
+          </code>
+      </pre>
+      <p class="text-moon text-left text-sm -mt-4 fragment">
+        Passes each array item to the callback function. The return value of that function will be included in the
+        result array.
+      </p>
+    </section>
+
+
+    <section class="w-full h-full">
+      <h1 class="text-xl">Each</h1>
+      <pre class="w-full shadow-none">
+         <code class="javascript w-full m-0 -my-8 px-4 leading-normal" data-trim data-noescape>
+          $people = [
+              new Person('Taylor', 35),
+              new Person('Rasmus', 58)
+          ];
+
+          array_walk($people, function (Person $p) {
+              echo $p->name ." "; // Impure, yeah
+          })); // 'Taylor Rasmus '
+         </code>
+      </pre>
+      <ul class="text-moon">
+        <li class="fragment">Like map, but does not return anything</li>
+        <li class="fragment">Only use for actions, do <b>not</b> use for transformation</li>
+      </ul>
+    </section>
+
+    <section class="w-full h-full">
+      <h1 class="text-red text-xl">Don't do that!</h1>
+      <pre class="w-full h-full shadow-none">
+               <code class="javascript w-full m-0 px-4 leading-normal overflow-hidden" data-trim data-noescape>
+                $people = [
+                    new Person('Taylor', 35),
+                    new Person('Rasmus', 58)
+                ];
+                $sumAge = function (array $collection) {
+                    $age = 0;
+
+                    array_walk($collection, function (Person $p) use (&$age) {
+                        $age += $p->age;
+                    });
+                    return $age;
+                };
+               </code>
+            </pre>
+    </section>
+
+    <section class="w-full h-full">
+      <h1 class="text-xl">Reduce</h1>
+      <pre class="w-full shadow-none">
+          <code class="javascript w-full m-0 px-4 leading-normal" data-trim data-noescape>
+                $people = [
+                    new Person('Taylor', 35),
+                    new Person('Rasmus', 58)
+                ];
+
+                $sumAge = function ($accumulatedAge, Person $person) {
+                    return $accumulatedAge + $person->age;
+                };
+
+                array_reduce($people, $sumAge); //End result: 93
+               </code>
+      </pre>
+      <p class="text-moon text-left text-sm -mt-4 fragment">
+        Passes each array item to the callback function. The return value of that function will be used as first
+        parameter (accumulator) in the next call. Does return whatever you like to.
+      </p>
+      <aside class="notes">
+        <ul>
+          <li>Accumulator carries values</li>
+          <li>Accumulator of next call is return of current method call</li>
+        </ul>
+      </aside>
+    </section>
+    <section class="w-full h-full">
+      <h1 class="text-xl">Reduce #2</h1>
+      <pre class="w-full shadow-none">
+          <code class="javascript w-full m-0 px-4 leading-normal" data-trim data-noescape>
+           $people = [
+               new Person('Taylor', 35),
+               new Person('Rasmus', 58)
+           ];
+
+           $concatNames = function (string $names, Person $person) {
+               return $names . $person->name . " ";
+           };
+
+           array_reduce($people, $concatNames, ""); // "Taylor Rasmus "
+          </code>
+      </pre>
+      <p class="text-moon text-left text-sm -mt-4 fragment">
+        Takes initial accumulator value as 3rd argument (optional).
+      </p>
+      <aside class="notes">
+        <ul>
+          <li>Initial value can be set (optionally)</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section>
+      <h1 class="text-lg">Tip: Don't use the vanilla implementation</h1>
+      <ul class="text-moon">
+        <li class="fragment">No method chaining possible</li>
+        <li class="fragment">Weird method signature (see array_map)</li>
+        <li class="fragment">Don't reinvent the wheel</li>
+      </ul>
+    </section>
+
+    <section>
+      <h1 class="text-lg">Use collections!</h1>
+      <img src="assets/collect-logo.png" class="border-0 bg-transparent shadow-none">
+      <a href="https://github.com/tightenco/collect/" class="text-xs">https://github.com/tightenco/collect/</a>
+      <aside class="notes">
+        100 Methods available
+        Macroable, split from Laravel framework as standalone
+        Immutable by default!
+      </aside>
+    </section>
+
+    <section>
+      <h1 class="text-lg">Final comparsion:</h1>
+      <h2 class="text-base">Get the average age of all people that have an "a" in their name</h2>
+    </section>
+
+    <section class="w-full h-full">
+      <h1 class="text-lg">Imperative</h1>
+      <pre class="w-full -mt-4 mb-6 shadow-none">
+               <code class="php w-full m-0 -mb-8 p-4 leading-normal" data-trim data-noescape>
+$ages = [];
+foreach ($people as $person) {
+    if (strpos($person->name, "a") !== false) {
+        $ages[] = $person->age;
+    }
+}
+$result = array_sum($ages) / count($ages);
+        </code>
+            </pre>
+    </section>
+
+    <section class="w-full h-full">
+      <h1 class="text-lg">Functional (with collections)</h1>
+      <pre class="w-full -mt-4 mb-6 shadow-none">
+        <code class="fragment php w-full m-0 -mb-8 p-4 leading-normal" data-trim data-noescape>
+$nameContains = function (string $toContain) {
+    return function (Person $p) use ($toContain) {
+        return strpos($p->name, $toContain) !== false;
+    };
+};
+        </code>
+        <code class="php w-full m-0 -mb-8 p-4 leading-normal" data-trim data-noescape>
+$result = collect($people)
+              ->filter($nameContains("a"))
+              ->pluck('age') // maps to the age property
+              ->avg();
+        </code>
+      </pre>
+    </section>
+
+
+    <section>
+      <h1 class="text-xl">Benefits?</h1>
+    </section>
+
+    <!-- Lego blocks -->
+    <section data-background="https://media.giphy.com/media/26BkNRBRwdXfGsAlW/giphy.gif"
+             data-background-size="contain"></section>
+
+    <section>
+      <ul class="text-moon">
+        <li>All benefits from pure functions</li>
+        <li class="fragment">Declarativity at it's finest!</li>
+        <li class="fragment">Compose things step by step</li>
+        <li class="fragment">No more nested loops</li>
+      </ul>
+      <aside class="notes">
+        Predictable: It's like a huge lookup table (similar to math. functions)
+        Parallel: Only depend on inputs, so no problem.
+      </aside>
+    </section>
+
+    <section>
+      <h1 class="text-xl">There must be a snag, right? <span class="fragment text-red">Yup!</span></h1>
+      <ul class="text-moon text-sm">
+        <li class="fragment">Default interface isn't designed intuitively ("solved" with collections)</li>
+        <li class="fragment">Steep learning curve</li>
+        <li class="fragment">Worse performance in comparison to imperative/OO (PHP-related)</li>
+      </ul>
+      <aside class="notes">
+        Worse performance/internal overhead. FP is good for
+        parallel processing, which doesn't happen in PHP. Also internal overhead)
+      </aside>
+    </section>
+
+    <section>
+      <h1 class="text-xl">Is this everything? <span class="fragment text-green">Nope!</span></h1>
+      <ul class="text-moon text-sm">
+        <li class="fragment">Recursion and Tail Call Optimization</li>
+        <li class="fragment">Currying</li>
+        <li class="fragment">Pipelines</li>
+        <li class="fragment">...</li>
+      </ul>
+      <aside class="notes">
+      </aside>
+    </section>
+
+
+    <section>
+      <h1>Concluding Words</h1>
+      <aside class="notes">
+        * Try it
+        * Use it where applicable
+        * Mix it with OO!
+      </aside>
+    </section>
+
+    <section>
+      <h2>Some awesome links</h2>
+
+      <ul class="text-sm">
+        <li class="fragment">
+          Slides: <a href="https://github.com/manniL/fp-in-php" class="text-pink"
+        >https://github.com/manniL/fp-in-php</a>
+        </li>
+        <li class="fragment">
+          Laravel collections: <a href="https://github.com/tightenco/collect/" class="text-pink">https://github.com/tightenco/collect/</a>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h1>Thanks for your attention!</h1>
+    </section>
+
+    <section>
+      <h1>Questions?</h1>
+    </section>
+
+
+    <!-- Lego blocks -->
+    <section data-background="https://media.giphy.com/media/26BkNRBRwdXfGsAlW/giphy.gif"
+             data-background-size="contain"></section>
+
+  </div>
+</div>
+<script src="lib/js/head.min.js"></script>
+<script src="lib/js/reveal.js"></script>
+
+<script>
+// More info about config & dependencies:
+// - https://github.com/hakimel/reveal.js#configuration
+// - https://github.com/hakimel/reveal.js#dependencies
+Reveal.initialize({
+  dependencies: [
+    { src: 'plugin/markdown/marked.js' },
+    { src: 'plugin/markdown/markdown.js' },
+    { src: 'plugin/notes/notes.js', async: true },
+    {
+      src: 'plugin/highlight/highlight.js',
+      async: true,
+      callback: function () { hljs.initHighlightingOnLoad() }
+    }
+  ],
+  history: true,
+  slideNumber: true,
+})
+</script>
+<script type="text/javascript" src="app.26a67cdf663508bfffff.js"></script></body>
+</html>
